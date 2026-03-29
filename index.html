@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fantasy League Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+    }
+
+    h1 { color: #00ffcc; }
+
+    .card {
+      background: #1e293b;
+      padding: 15px;
+      margin: 10px;
+      border-radius: 12px;
+    }
+
+    .player {
+      background: #334155;
+      margin: 5px;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .selected { background: green; }
+
+    button {
+      padding: 12px;
+      margin: 10px;
+      border-radius: 10px;
+      border: none;
+      background: #00ffcc;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🏏 Fantasy League</h1>
+
+<div class="card">
+  <h3 id="coins">Coins: 100</h3>
+  <h4>Entry Fee: 10 Coins</h4>
+</div>
+
+<div class="card">
+  <h3>Select Your Team (5 Players)</h3>
+  <div id="players"></div>
+</div>
+
+<button onclick="joinMatch()">Join Contest</button>
+
+<div class="card">
+  <h2 id="result"></h2>
+</div>
+
+<script>
+let coins = 100;
+
+let players = [
+  "Virat Kohli", "Rohit Sharma", "MS Dhoni",
+  "Hardik Pandya", "Shubman Gill",
+  "Bumrah", "Shami", "KL Rahul",
+  "Pant", "Jadeja"
+];
+
+let selected = [];
+
+let container = document.getElementById("players");
+
+players.forEach(name => {
+  let div = document.createElement("div");
+  div.innerText = name;
+  div.className = "player";
+
+  div.onclick = () => {
+    if(selected.includes(name)){
+      selected = selected.filter(p => p !== name);
+      div.classList.remove("selected");
+    } else {
+      if(selected.length < 5){
+        selected.push(name);
+        div.classList.add("selected");
+      } else {
+        alert("Only 5 players allowed");
+      }
+    }
+  };
+
+  container.appendChild(div);
+});
+
+function joinMatch(){
+  if(selected.length < 5){
+    alert("Select 5 players");
+    return;
+  }
+
+  if(coins < 10){
+    alert("Not enough coins");
+    return;
+  }
+
+  coins -= 10;
+
+  let score = 0;
+
+  selected.forEach(()=>{
+    score += Math.floor(Math.random()*50);
+  });
+
+  if(score > 120){
+    coins += 30;
+    document.getElementById("result").innerText =
+      "🏆 You Won ₹50! Score: " + score;
+  } else {
+    document.getElementById("result").innerText =
+      "😢 You Lost. Score: " + score;
+  }
+
+  document.getElementById("coins").innerText = "Coins: " + coins;
+
+  selected = [];
+  document.querySelectorAll(".player").forEach(p => p.classList.remove("selected"));
+}
+</script>
+
+</body>
+</html>
