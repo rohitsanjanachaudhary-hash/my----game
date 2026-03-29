@@ -27,17 +27,18 @@
             padding: 10px;
             margin: 5px;
             border: none;
+            border-radius: 8px;
             background: orange;
             color: black;
-            border-radius: 5px;
+            font-weight: bold;
             cursor: pointer;
         }
 
         .player {
-            padding: 10px;
-            margin: 5px;
             background: #334155;
-            border-radius: 8px;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 6px;
             cursor: pointer;
         }
 
@@ -49,59 +50,77 @@
 
 <body>
 
-<h1>🔥 Fantasy Game Pro</h1>
+    <h1>🔥 Fantasy Game Pro</h1>
 
-<div class="card">
     <h3>Coins: <span id="coins">100</span></h3>
 
-    <h3>Add Coins</h3>
-    <button onclick="addCoins(50)">+50</button>
-    <button onclick="addCoins(100)">+100</button>
-</div>
+    <div class="card">
+        <h3>Add Coins</h3>
+        <button onclick="addCoins(50)">₹10 → 50 Coins</button>
+        <button onclick="addCoins(100)">₹20 → 100 Coins</button>
+    </div>
 
-<div class="card">
-    <h3>Select Team (Max 5)</h3>
+    <div class="card">
+        <h3>Select Team (Max 5)</h3>
 
-    <div class="player" onclick="selectPlayer(this)">Virat</div>
-    <div class="player" onclick="selectPlayer(this)">Rohit</div>
-    <div class="player" onclick="selectPlayer(this)">Dhoni</div>
-    <div class="player" onclick="selectPlayer(this)">Hardik</div>
-    <div class="player" onclick="selectPlayer(this)">Gill</div>
-    <div class="player" onclick="selectPlayer(this)">Bumrah</div>
-    <div class="player" onclick="selectPlayer(this)">Shami</div>
-    <div class="player" onclick="selectPlayer(this)">Rahul</div>
-    <div class="player" onclick="selectPlayer(this)">Pant</div>
-    <div class="player" onclick="selectPlayer(this)">Jadeja</div>
-</div>
-<button onclick="submitTeam()">Join Match</button>
-<script>
-let coins = 100;
-let selected = 0;
+        <div class="player" onclick="selectPlayer(this)">Virat</div>
+        <div class="player" onclick="selectPlayer(this)">Rohit</div>
+        <div class="player" onclick="selectPlayer(this)">Dhoni</div>
+        <div class="player" onclick="selectPlayer(this)">Hardik</div>
+        <div class="player" onclick="selectPlayer(this)">Gill</div>
+        <div class="player" onclick="selectPlayer(this)">Bumrah</div>
+        <div class="player" onclick="selectPlayer(this)">Shami</div>
+        <div class="player" onclick="selectPlayer(this)">Rahul</div>
+        <div class="player" onclick="selectPlayer(this)">Pant</div>
+        <div class="player" onclick="selectPlayer(this)">Jadeja</div>
 
-function addCoins(amount) {
-    coins += amount;
-    document.getElementById("coins").innerText = coins;
-}
+        <br><br>
 
-function selectPlayer(el) {
-    if (el.classList.contains("selected")) {
-        el.classList.remove("selected");
-        selected--;
-    } else {
-        if (selected >= 5) {
-            alert("Max 5 players allowed!");
-            return;
-        }
-        el.classList.add("selected");
-        selected++;
-    }
-}
+        <button onclick="submitTeam()">Join Match</button>
+    </div>
+
     <script>
-        function submitTeam()
-    {
-    alrert("Team Joined Successfully");
-    }
-</script>
-    
+        let coins = 100;
+        let selectedPlayers = [];
+
+        function addCoins(amount) {
+            coins += amount;
+            document.getElementById("coins").innerText = coins;
+        }
+
+        function selectPlayer(el) {
+            let name = el.innerText;
+
+            if (selectedPlayers.includes(name)) {
+                selectedPlayers = selectedPlayers.filter(p => p !== name);
+                el.classList.remove("selected");
+            } else {
+                if (selectedPlayers.length >= 5) {
+                    alert("Max 5 players allowed!");
+                    return;
+                }
+                selectedPlayers.push(name);
+                el.classList.add("selected");
+            }
+        }
+
+        function submitTeam() {
+            if (selectedPlayers.length !== 5) {
+                alert("Select exactly 5 players!");
+                return;
+            }
+
+            if (coins < 50) {
+                alert("Not enough coins!");
+                return;
+            }
+
+            coins -= 50;
+            document.getElementById("coins").innerText = coins;
+
+            alert("Team Joined Successfully ✅");
+        }
+    </script>
+
 </body>
 </html>
