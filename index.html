@@ -1,126 +1,187 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fantasy Game Pro</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasy Game Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            font-family: Arial;
-            background: #0f172a;
-            color: white;
-            text-align: center;
-        }
+<style>
+body {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+  text-align: center;
+}
+h1 { color: orange; }
 
-        h1 {
-            color: orange;
-        }
+.card {
+  background: #1e293b;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+}
 
-        .card {
-            background: #1e293b;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 10px;
-        }
+.player {
+  background: #334155;
+  margin: 5px;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
 
-        button {
-            padding: 10px;
-            margin: 5px;
-            border: none;
-            border-radius: 8px;
-            background: orange;
-            color: black;
-            font-weight: bold;
-            cursor: pointer;
-        }
+.selected { background: green; }
 
-        .player {
-            background: #334155;
-            margin: 5px;
-            padding: 10px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
+button {
+  padding: 10px;
+  margin: 5px;
+  background: orange;
+  border: none;
+  border-radius: 5px;
+}
 
-        .selected {
-            background: green;
-        }
-    </style>
+input {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+}
+</style>
 </head>
 
 <body>
 
-    <h1>🔥 Fantasy Game Pro</h1>
+<h1>🔥 Fantasy Game Pro</h1>
 
-    <h3>Coins: <span id="coins">100</span></h3>
+<!-- LOGIN -->
+<div class="card">
+  <h3>Login</h3>
+  <input id="username" placeholder="Enter name">
+  <button onclick="login()">Login</button>
+  <h3 id="user"></h3>
+</div>
 
-    <div class="card">
-        <h3>Add Coins</h3>
-        <button onclick="addCoins(50)">₹10 → 50 Coins</button>
-        <button onclick="addCoins(100)">₹20 → 100 Coins</button>
-    </div>
+<!-- COINS -->
+<div class="card">
+  <h3>Coins: <span id="coins">100</span></h3>
+  <button onclick="addCoins(50)">+50 Coins</button>
+</div>
 
-    <div class="card">
-        <h3>Select Team (Max 5)</h3>
+<!-- PLAYERS -->
+<div class="card">
+  <h3>Select Team (5 Players)</h3>
+  <div id="players"></div>
+</div>
 
-        <div class="player" onclick="selectPlayer(this)">Virat</div>
-        <div class="player" onclick="selectPlayer(this)">Rohit</div>
-        <div class="player" onclick="selectPlayer(this)">Dhoni</div>
-        <div class="player" onclick="selectPlayer(this)">Hardik</div>
-        <div class="player" onclick="selectPlayer(this)">Gill</div>
-        <div class="player" onclick="selectPlayer(this)">Bumrah</div>
-        <div class="player" onclick="selectPlayer(this)">Shami</div>
-        <div class="player" onclick="selectPlayer(this)">Rahul</div>
-        <div class="player" onclick="selectPlayer(this)">Pant</div>
-        <div class="player" onclick="selectPlayer(this)">Jadeja</div>
+<!-- JOIN MATCH -->
+<div class="card">
+  <button onclick="joinMatch()">Join Match (10 Coins)</button>
+  <h2 id="result"></h2>
+</div>
 
-        <br><br>
+<!-- WITHDRAW -->
+<div class="card">
+  <h3>💳 Withdraw</h3>
+  <input id="upi" placeholder="Enter UPI ID">
+  <br><br>
+  <button onclick="withdraw()">Withdraw ₹100</button>
+  <h4 id="withdrawMsg"></h4>
+</div>
 
-        <button onclick="submitTeam()">Join Match</button>
-    </div>
+<script>
+let coins = localStorage.getItem("coins") || 100;
+let user = localStorage.getItem("user") || "";
+let selected = [];
 
-    <script>
-        let coins = 100;
-        let selectedPlayers = [];
+document.getElementById("coins").innerText = coins;
+document.getElementById("user").innerText = user ? "Welcome " + user : "";
 
-        function addCoins(amount) {
-            coins += amount;
-            document.getElementById("coins").innerText = coins;
-        }
+// LOGIN
+function login() {
+  let name = document.getElementById("username").value;
+  localStorage.setItem("user", name);
+  document.getElementById("user").innerText = "Welcome " + name;
+}
 
-        function selectPlayer(el) {
-            let name = el.innerText;
+// ADD COINS
+function addCoins(amount) {
+  coins = parseInt(coins) + amount;
+  localStorage.setItem("coins", coins);
+  document.getElementById("coins").innerText = coins;
+}
 
-            if (selectedPlayers.includes(name)) {
-                selectedPlayers = selectedPlayers.filter(p => p !== name);
-                el.classList.remove("selected");
-            } else {
-                if (selectedPlayers.length >= 5) {
-                    alert("Max 5 players allowed!");
-                    return;
-                }
-                selectedPlayers.push(name);
-                el.classList.add("selected");
-            }
-        }
+// PLAYERS
+let players = ["Virat","Rohit","Dhoni","Hardik","Gill","Bumrah","Shami","Rahul","Pant","Jadeja"];
+let container = document.getElementById("players");
 
-        function submitTeam() {
-            if (selectedPlayers.length !== 5) {
-                alert("Select exactly 5 players!");
-                return;
-            }
+players.forEach(name => {
+  let div = document.createElement("div");
+  div.innerText = name;
+  div.className = "player";
 
-            if (coins < 50) {
-                alert("Not enough coins!");
-                return;
-            }
+  div.onclick = () => {
+    if(selected.includes(name)){
+      selected = selected.filter(p => p !== name);
+      div.classList.remove("selected");
+    } else {
+      if(selected.length < 5){
+        selected.push(name);
+        div.classList.add("selected");
+      } else {
+        alert("Select only 5 players");
+      }
+    }
+  };
 
-            coins -= 50;
-            document.getElementById("coins").innerText = coins;
+  container.appendChild(div);
+});
 
-            alert("Team Joined Successfully ✅");
-        }
-    </script>
+// JOIN MATCH
+function joinMatch(){
+  if(selected.length < 5){
+    alert("Select 5 players");
+    return;
+  }
+
+  if(coins < 10){
+    alert("Not enough coins");
+    return;
+  }
+
+  coins -= 10;
+
+  let score = Math.floor(Math.random()*150);
+
+  if(score > 70){
+    coins += 30;
+    document.getElementById("result").innerText = "🏆 You Won! Score: " + score;
+  } else {
+    document.getElementById("result").innerText = "😢 You Lost! Score: " + score;
+  }
+
+  localStorage.setItem("coins", coins);
+  document.getElementById("coins").innerText = coins;
+}
+
+// WITHDRAW (DEMO)
+function withdraw(){
+  let upi = document.getElementById("upi").value;
+
+  if(!upi){
+    alert("Enter UPI ID");
+    return;
+  }
+
+  if(coins < 100){
+    alert("Not enough coins");
+    return;
+  }
+
+  coins -= 100;
+  localStorage.setItem("coins", coins);
+  document.getElementById("coins").innerText = coins;
+
+  document.getElementById("withdrawMsg").innerText =
+    "✅ ₹100 request sent to " + upi;
+}
+</script>
 
 </body>
 </html>
