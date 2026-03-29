@@ -1,189 +1,168 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Fantasy Game Pro</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Game Pro</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: orange;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            border-radius: 12px;
+        }
+
+        .coins {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: gold;
+        }
+
+        button {
+            background: orange;
+            color: black;
+            border: none;
+            padding: 12px 20px;
+            margin: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #ffb347;
+        }
+
+        .player {
+            background: #334155;
+            padding: 12px;
+            margin: 8px auto;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 80%;
+        }
+
+        .selected {
+            background: green !important;
+        }
+
+        input {
+            padding: 10px;
+            width: 250px;
+            border-radius: 8px;
+            border: none;
+            margin-top: 10px;
+        }
+
+        #selectedTeam {
+            margin-top: 15px;
+            color: lightgreen;
+        }
+
+        #withdrawMsg {
+            margin-top: 10px;
+            color: cyan;
+        }
+    </style>
 </head>
-  <body>
-<style>
-body {
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
-  text-align: center;
-}
-h1 { color: orange; }
-
-.card {
-  background: #1e293b;
-  padding: 15px;
-  margin: 10px;
-  border-radius: 10px;
-}
-
-.player {
-  background: #334155;
-  margin: 5px;
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.selected { background: green; }
-
-button {
-  padding: 10px;
-  margin: 5px;
-  background: orange;
-  border: none;
-  border-radius: 5px;
-}
-
-input {
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-}
-</style>
-</head>
-
 <body>
 
-<h1>🔥 Fantasy Game Pro</h1>
+    <h1>🏏 Fantasy Game Pro</h1>
 
-<!-- LOGIN -->
-<div class="card">
-  <h3>Login</h3>
-  <input id="username" placeholder="Enter name">
-  <button onclick="login()">Login</button>
-  <h3 id="user"></h3>
-</div>
+    <div class="card">
+        <div class="coins">Coins: <span id="coins">90</span></div>
 
-<!-- COINS -->
-<div class="card">
-  <h3>Coins: <span id="coins">100</span></h3>
-  <button onclick="addCoins(50)">+50 Coins</button>
-</div>
+        <h2>💰 Add Coins</h2>
+        <button onclick="addCoins(50)">₹10 → 50 Coins</button>
+        <button onclick="addCoins(100)">₹20 → 100 Coins</button>
+    </div>
 
-<!-- PLAYERS -->
-<div class="card">
-  <h3>Select Team (5 Players)</h3>
-  <div id="players"></div>
-</div>
+    <div class="card">
+        <h2>Select Team (Max 5)</h2>
 
-<!-- JOIN MATCH -->
-<div class="card">
-  <button onclick="joinMatch()">Join Match (10 Coins)</button>
-  <h2 id="result"></h2>
-</div>
+        <div class="player" onclick="selectPlayer(this)">Virat</div>
+        <div class="player" onclick="selectPlayer(this)">Rohit</div>
+        <div class="player" onclick="selectPlayer(this)">Dhoni</div>
+        <div class="player" onclick="selectPlayer(this)">Hardik</div>
+        <div class="player" onclick="selectPlayer(this)">Gill</div>
+        <div class="player" onclick="selectPlayer(this)">Bumrah</div>
+        <div class="player" onclick="selectPlayer(this)">Shami</div>
 
-<!-- WITHDRAW -->
-<div class="card">
-  <h3>💳 Withdraw</h3>
-  <input id="upi" placeholder="Enter UPI ID">
-  <br><br>
-  <button onclick="withdraw()">Withdraw ₹100</button>
-  <h4 id="withdrawMsg"></h4>
-</div>
+        <div id="selectedTeam"></div>
+    </div>
 
-<script>
-let coins = localStorage.getItem("coins") || 100;
-let user = localStorage.getItem("user") || "";
-let selected = [];
+    <div class="card">
+        <h2>💸 Withdraw Coins</h2>
+        <input type="text" id="upi" placeholder="Enter UPI ID">
+        <br>
+        <button onclick="withdraw()">Withdraw 100 Coins</button>
+        <div id="withdrawMsg"></div>
+    </div>
 
-document.getElementById("coins").innerText = coins;
-document.getElementById("user").innerText = user ? "Welcome " + user : "";
+    <script>
+        let coins = 90;
+        let selectedPlayers = [];
 
-// LOGIN
-function login() {
-  let name = document.getElementById("username").value;
-  localStorage.setItem("user", name);
-  document.getElementById("user").innerText = "Welcome " + name;
-}
+        function addCoins(amount) {
+            coins += amount;
+            document.getElementById("coins").innerText = coins;
+        }
 
-// ADD COINS
-function addCoins(amount) {
-  coins = parseInt(coins) + amount;
-  localStorage.setItem("coins", coins);
-  document.getElementById("coins").innerText = coins;
-}
+        function selectPlayer(element) {
+            let name = element.innerText;
 
-// PLAYERS
-let players = ["Virat","Rohit","Dhoni","Hardik","Gill","Bumrah","Shami","Rahul","Pant","Jadeja"];
-let container = document.getElementById("players");
+            if (element.classList.contains("selected")) {
+                element.classList.remove("selected");
+                selectedPlayers = selectedPlayers.filter(p => p !== name);
+            } else {
+                if (selectedPlayers.length >= 5) {
+                    alert("Max 5 players!");
+                    return;
+                }
 
-players.forEach(name => {
-  let div = document.createElement("div");
-  div.innerText = name;
-  div.className = "player";
+                element.classList.add("selected");
+                selectedPlayers.push(name);
+            }
 
-  div.onclick = () => {
-    if(selected.includes(name)){
-      selected = selected.filter(p => p !== name);
-      div.classList.remove("selected");
-    } else {
-      if(selected.length < 5){
-        selected.push(name);
-        div.classList.add("selected");
-      } else {
-        alert("Select only 5 players");
-      }
-    }
-  };
+            document.getElementById("selectedTeam").innerText =
+                "Selected: " + selectedPlayers.join(", ");
+        }
 
-  container.appendChild(div);
-});
+        function withdraw() {
+            let upi = document.getElementById("upi").value;
 
-// JOIN MATCH
-function joinMatch(){
-  if(selected.length < 5){
-    alert("Select 5 players");
-    return;
-  }
+            if (!upi) {
+                alert("Enter UPI ID");
+                return;
+            }
 
-  if(coins < 10){
-    alert("Not enough coins");
-    return;
-  }
+            if (coins < 100) {
+                alert("Not enough coins");
+                return;
+            }
 
-  coins -= 10;
+            coins -= 100;
+            document.getElementById("coins").innerText = coins;
 
-  let score = Math.floor(Math.random()*150);
+            document.getElementById("withdrawMsg").innerText =
+                "✅ ₹100 request sent to " + upi;
+        }
+    </script>
 
-  if(score > 70){
-    coins += 30;
-    document.getElementById("result").innerText = "🏆 You Won! Score: " + score;
-  } else {
-    document.getElementById("result").innerText = "😢 You Lost! Score: " + score;
-  }
-
-  localStorage.setItem("coins", coins);
-  document.getElementById("coins").innerText = coins;
-}
-
-// WITHDRAW (DEMO)
-function withdraw(){
-  let upi = document.getElementById("upi").value;
-
-  if(!upi){
-    alert("Enter UPI ID");
-    return;
-  }
-
-  if(coins < 100){
-    alert("Not enough coins");
-    return;
-  }
-
-  coins -= 100;
-  localStorage.setItem("coins", coins);
-  document.getElementById("coins").innerText = coins;
-
-  document.getElementById("withdrawMsg").innerText =
-    "✅ ₹100 request sent to " + upi;
-}
-</script>
-<script src="script.js">
 </body>
 </html>
