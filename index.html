@@ -1,168 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fantasy Game Pro</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: white;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-        }
-
-        h1 {
-            color: orange;
-        }
-
-        .card {
-            background: #1e293b;
-            padding: 20px;
-            margin: 20px auto;
-            width: 80%;
-            border-radius: 12px;
-        }
-
-        .coins {
-            font-size: 22px;
-            margin-bottom: 20px;
-            color: gold;
-        }
-
-        button {
-            background: orange;
-            color: black;
-            border: none;
-            padding: 12px 20px;
-            margin: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background: #ffb347;
-        }
-
-        .player {
-            background: #334155;
-            padding: 12px;
-            margin: 8px auto;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 80%;
-        }
-
-        .selected {
-            background: green !important;
-        }
-
-        input {
-            padding: 10px;
-            width: 250px;
-            border-radius: 8px;
-            border: none;
-            margin-top: 10px;
-        }
-
-        #selectedTeam {
-            margin-top: 15px;
-            color: lightgreen;
-        }
-
-        #withdrawMsg {
-            margin-top: 10px;
-            color: cyan;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fantasy Game Pro</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+    }
+    header {
+      background: #1e293b;
+      padding: 18px;
+      font-size: 28px;
+      font-weight: bold;
+      color: orange;
+    }
+    .card {
+      width: 90%;
+      max-width: 700px;
+      margin: 18px auto;
+      padding: 20px;
+      border-radius: 15px;
+      background: #1e293b;
+      box-shadow: 0 0 12px rgba(0,0,0,0.35);
+    }
+    button {
+      background: orange;
+      color: black;
+      border: none;
+      padding: 12px 18px;
+      margin: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    input {
+      padding: 10px;
+      width: 260px;
+      max-width: 90%;
+      border: none;
+      border-radius: 8px;
+      margin: 8px;
+    }
+    .player {
+      background: #334155;
+      padding: 12px;
+      margin: 8px auto;
+      width: 85%;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .selected {
+      background: green !important;
+    }
+    .live {
+      color: #22c55e;
+      font-size: 22px;
+      font-weight: bold;
+    }
+    #winnerOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 999;
+    }
+    #winnerPopup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1e293b;
+      padding: 25px;
+      border-radius: 15px;
+      z-index: 1000;
+      width: 300px;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>🏏 Fantasy Game Pro</h1>
+<header>🏏 Fantasy Game Pro</header>
 
-    <div class="card">
-        <div class="coins">Coins: <span id="coins">90</span></div>
+<div class="card">
+  <h2>👤 Login</h2>
+  <input type="text" id="username" placeholder="Enter your name">
+  <button onclick="login()">Login</button>
+  <h3 id="welcome"></h3>
+</div>
 
-        <h2>💰 Add Coins</h2>
-        <button onclick="addCoins(50)">₹10 → 50 Coins</button>
-        <button onclick="addCoins(100)">₹20 → 100 Coins</button>
-    </div>
+<div class="card">
+  <h2>💰 Wallet</h2>
+  <p>Coins: <span id="coins">200</span></p>
+  <button onclick="addCoins(50)">₹10 → 50 Coins</button>
+  <button onclick="addCoins(100)">₹20 → 100 Coins</button>
+</div>
 
-    <div class="card">
-        <h2>Select Team (Max 5)</h2>
+<div class="card">
+  <h2>🏆 Live Match</h2>
+  <p class="live" id="liveScore">IND 184/3 (18.2)</p>
+  <button onclick="joinContest()">Join Contest (50 Coins)</button>
+  <p id="contestMsg"></p>
+</div>
 
-        <div class="player" onclick="selectPlayer(this)">Virat</div>
-        <div class="player" onclick="selectPlayer(this)">Rohit</div>
-        <div class="player" onclick="selectPlayer(this)">Dhoni</div>
-        <div class="player" onclick="selectPlayer(this)">Hardik</div>
-        <div class="player" onclick="selectPlayer(this)">Gill</div>
-        <div class="player" onclick="selectPlayer(this)">Bumrah</div>
-        <div class="player" onclick="selectPlayer(this)">Shami</div>
+<div class="card">
+  <h2>🏏 Select Team (Max 5)</h2>
+  <div class="player" onclick="selectPlayer(this)">Virat</div>
+  <div class="player" onclick="selectPlayer(this)">Rohit</div>
+  <div class="player" onclick="selectPlayer(this)">Dhoni</div>
+  <div class="player" onclick="selectPlayer(this)">Hardik</div>
+  <div class="player" onclick="selectPlayer(this)">Gill</div>
+  <div class="player" onclick="selectPlayer(this)">Bumrah</div>
+  <div class="player" onclick="selectPlayer(this)">Shami</div>
+  <p id="selectedTeam"></p>
+</div>
 
-        <div id="selectedTeam"></div>
-    </div>
+<div class="card">
+  <h2>📊 Leaderboard</h2>
+  <p>Rank: <span id="myRank">--</span></p>
+  <p>Points: <span id="myPoints">0</span></p>
+</div>
 
-    <div class="card">
-        <h2>💸 Withdraw Coins</h2>
-        <input type="text" id="upi" placeholder="Enter UPI ID">
-        <br>
-        <button onclick="withdraw()">Withdraw 100 Coins</button>
-        <div id="withdrawMsg"></div>
-    </div>
+<div class="card">
+  <h2>💸 Withdraw</h2>
+  <input type="text" id="upi" placeholder="Enter UPI ID">
+  <button onclick="withdraw()">Withdraw 100 Coins</button>
+  <p id="withdrawMsg"></p>
+</div>
 
-    <script>
-        let coins = 90;
-        let selectedPlayers = [];
+<div id="winnerOverlay"></div>
+<div id="winnerPopup">
+  <h2>🎉 Winner Announced!</h2>
+  <p>🏆 Rank: <span id="winnerRank"></span></p>
+  <p>⭐ Points: <span id="winnerPoints"></span></p>
+  <p>💰 Prize: ₹<span id="winnerPrize"></span></p>
+  <button onclick="closeWinnerPopup()">Close</button>
+</div>
 
-        function addCoins(amount) {
-            coins += amount;
-            document.getElementById("coins").innerText = coins;
-        }
-
-        function selectPlayer(element) {
-            let name = element.innerText;
-
-            if (element.classList.contains("selected")) {
-                element.classList.remove("selected");
-                selectedPlayers = selectedPlayers.filter(p => p !== name);
-            } else {
-                if (selectedPlayers.length >= 5) {
-                    alert("Max 5 players!");
-                    return;
-                }
-
-                element.classList.add("selected");
-                selectedPlayers.push(name);
-            }
-
-            document.getElementById("selectedTeam").innerText =
-                "Selected: " + selectedPlayers.join(", ");
-        }
-
-        function withdraw() {
-            let upi = document.getElementById("upi").value;
-
-            if (!upi) {
-                alert("Enter UPI ID");
-                return;
-            }
-
-            if (coins < 100) {
-                alert("Not enough coins");
-                return;
-            }
-
-            coins -= 100;
-            document.getElementById("coins").innerText = coins;
-
-            document.getElementById("withdrawMsg").innerText =
-                "✅ ₹100 request sent to " + upi;
-        }
-    </script>
+<script src="script.js"></script>
+<script type="module" src="firebase.js"></script>
 
 </body>
 </html>
