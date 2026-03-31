@@ -125,31 +125,26 @@
   <h2>📊 Leaderboard</h2>
   <p>Rank: <span id="myRank">--</span></p>
   <p>Points: <span id="myPoints">0</span></p>
+  <!-- 👇 Withdraw Button -->
+<div style="text-align:center; margin-top:20px;">
+  <button onclick="withdrawMoney()" 
+    style="background:red; color:white; padding:15px; border:none;">
+    Withdraw Money
+  </button>
 </div>
-
-<div class="card">
-  <h2>💸 Withdraw</h2>
-  <input type="text" id="upi" placeholder="Enter UPI ID">
-  <button onclick="withdraw()">Withdraw 100 Coins</button>
-  <p id="withdrawMsg"></p>
-</div>
-
-<div id="winnerOverlay"></div>
-<div id="winnerPopup">
-  <h2>🎉 Winner Announced!</h2>
-  <p>🏆 Rank: <span id="winnerRank"></span></p>
-  <p>⭐ Points: <span id="winnerPoints"></span></p>
-  <p>💰 Prize: ₹<span id="winnerPrize"></span></p>
-  <button onclick="closeWinnerPopup()">Close</button>
-</div>
-<button onclick="withdrawMoney()" style="background:red;">
-  Withdraw Money
-</button>
 
 <script>
 function withdrawMoney() {
-  alert("Withdraw request submitted!");
+    let amount = prompt("Enter withdraw amount:");
+    if(!amount){
+        alert("Enter amount");
+        return;
+    }
+    alert("₹" + amount + " request submitted");
 }
+</script>
+
+</body>
 </script>
 <script src="script.js"></script>
 <script type="module" src="firebase.js"></script>
