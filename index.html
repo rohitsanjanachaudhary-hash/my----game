@@ -1,153 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fantasy Game Pro</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-      text-align: center;
-    }
-    header {
-      background: #1e293b;
-      padding: 18px;
-      font-size: 28px;
-      font-weight: bold;
-      color: orange;
-    }
-    .card {
-      width: 90%;
-      max-width: 700px;
-      margin: 18px auto;
-      padding: 20px;
-      border-radius: 15px;
-      background: #1e293b;
-      box-shadow: 0 0 12px rgba(0,0,0,0.35);
-    }
-    button {
-      background: orange;
-      color: black;
-      border: none;
-      padding: 12px 18px;
-      margin: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    input {
-      padding: 10px;
-      width: 260px;
-      max-width: 90%;
-      border: none;
-      border-radius: 8px;
-      margin: 8px;
-    }
-    .player {
-      background: #334155;
-      padding: 12px;
-      margin: 8px auto;
-      width: 85%;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .selected {
-      background: green !important;
-    }
-    .live {
-      color: #22c55e;
-      font-size: 22px;
-      font-weight: bold;
-    }
-    #winnerOverlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 999;
-    }
-    #winnerPopup {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #1e293b;
-      padding: 25px;
-      border-radius: 15px;
-      z-index: 1000;
-      width: 300px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasy Game App</title>
+
+<style>
+body {
+    margin:0;
+    font-family: Arial;
+    background:#f4f6f9;
+}
+
+header {
+    background:#0d6efd;
+    color:white;
+    padding:15px;
+    text-align:center;
+    font-size:22px;
+}
+
+.container {
+    padding:20px;
+}
+
+.card {
+    background:white;
+    padding:20px;
+    margin:15px 0;
+    border-radius:10px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+button {
+    padding:10px 20px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.green { background:green; color:white; }
+.red { background:red; color:white; }
+.blue { background:#0d6efd; color:white; }
+
+input {
+    padding:10px;
+    width:100%;
+    margin:10px 0;
+}
+</style>
 </head>
+
 <body>
 
-<header>🏏 Fantasy Game Pro</header>
+<header>🔥 Fantasy Game App</header>
 
+<div class="container">
+
+<!-- LOGIN -->
 <div class="card">
-  <h2>👤 Login</h2>
-  <input type="text" id="username" placeholder="Enter your name">
-  <button onclick="login()">Login</button>
-  <h3 id="welcome"></h3>
+<h3>Login</h3>
+<input type="text" id="username" placeholder="Enter Name">
+<button class="blue" onclick="login()">Login</button>
 </div>
 
+<!-- WALLET -->
 <div class="card">
-  <h2>💰 Wallet</h2>
-  <p>Coins: <span id="coins">200</span></p>
-  <button onclick="addCoins(50)">₹10 → 50 Coins</button>
-  <button onclick="addCoins(100)">₹20 → 100 Coins</button>
+<h3>💰 Wallet</h3>
+<p>Balance: ₹<span id="balance">0</span></p>
+
+<button class="green" onclick="addMoney()">Add Money</button>
+<button class="red" onclick="withdrawMoney()">Withdraw</button>
 </div>
 
+<!-- GAME -->
 <div class="card">
-  <h2>🏆 Live Match</h2>
-  <p class="live" id="liveScore">IND 184/3 (18.2)</p>
-  <button onclick="joinContest()">Join Contest (50 Coins)</button>
-  <p id="contestMsg"></p>
+<h3>🎮 Match</h3>
+<p>Join contest and win money</p>
+<button class="blue" onclick="joinGame()">Join Match (₹50)</button>
 </div>
 
-<div class="card">
-  <h2>🏏 Select Team (Max 5)</h2>
-  <div class="player" onclick="selectPlayer(this)">Virat</div>
-  <div class="player" onclick="selectPlayer(this)">Rohit</div>
-  <div class="player" onclick="selectPlayer(this)">Dhoni</div>
-  <div class="player" onclick="selectPlayer(this)">Hardik</div>
-  <div class="player" onclick="selectPlayer(this)">Gill</div>
-  <div class="player" onclick="selectPlayer(this)">Bumrah</div>
-  <div class="player" onclick="selectPlayer(this)">Shami</div>
-  <p id="selectedTeam"></p>
-</div>
-
-<div class="card">
-  <h2>📊 Leaderboard</h2>
-  <p>Rank: <span id="myRank">--</span></p>
-  <p>Points: <span id="myPoints">0</span></p>
-  <!-- 👇 Withdraw Button -->
-<div style="text-align:center; margin-top:20px;">
-  <button onclick="withdrawMoney()" 
-    style="background:red; color:white; padding:15px; border:none;">
-    Withdraw Money
-  </button>
 </div>
 
 <script>
-function withdrawMoney() {
-    let amount = prompt("Enter withdraw amount:");
-    if(!amount){
-        alert("Enter amount");
+let balance = 0;
+
+// LOGIN
+function login() {
+    let name = document.getElementById("username").value;
+    if(name == "") {
+        alert("Enter name");
         return;
     }
-    alert("₹" + amount + " request submitted");
+    alert("Welcome " + name);
+}
+
+// UPDATE BALANCE
+function updateBalance() {
+    document.getElementById("balance").innerText = balance;
+}
+
+// ADD MONEY
+function addMoney() {
+    let amount = prompt("Enter amount to add:");
+    if(!amount) return;
+    balance += parseInt(amount);
+    updateBalance();
+    alert("Money Added!");
+}
+
+// WITHDRAW
+function withdrawMoney() {
+    let amount = prompt("Enter withdraw amount:");
+    if(!amount) return;
+
+    if(amount > balance) {
+        alert("Insufficient Balance");
+        return;
+    }
+
+    balance -= parseInt(amount);
+    updateBalance();
+    alert("Withdrawal Successful!");
+}
+
+// JOIN GAME
+function joinGame() {
+    if(balance < 50) {
+        alert("Add money first");
+        return;
+    }
+
+    balance -= 50;
+    updateBalance();
+
+    let win = Math.random() > 0.5;
+
+    if(win) {
+        balance += 100;
+        alert("🎉 You Won ₹100!");
+    } else {
+        alert("❌ You Lost");
+    }
+
+    updateBalance();
 }
 </script>
-
-</body>
-</script>
-<script src="script.js"></script>
-<script type="module" src="firebase.js"></script>
 
 </body>
 </html>
